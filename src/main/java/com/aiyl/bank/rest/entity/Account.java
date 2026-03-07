@@ -44,4 +44,8 @@ public class Account {
     protected void onUpdate() {
         this.updateTime = LocalDateTime.now();
     }
+
+    public boolean hasSufficientSum(BigDecimal amount) {
+        return this.balance.compareTo(amount) >= 0;
+    }
 }

@@ -5,13 +5,10 @@ import com.aiyl.bank.rest.enam.TransactionStatus;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public record TransferResponse(
+public record StatementDto(
         Long transactionId,
-        String sourceAccountNumber,
-        String targetAccountNumber,
+        LocalDateTime operationDate,
         BigDecimal amount,
-        TransactionStatus status,
-        BigDecimal sourceBalanceAfter,
-        LocalDateTime createdAt
+        TransactionStatus status
 ) {
 }

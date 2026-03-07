@@ -2,7 +2,7 @@ package com.aiyl.bank.rest.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class ApiException extends RuntimeException {
+public abstract class ApiException extends RuntimeException {
   private final HttpStatus status;
 
     protected ApiException(String message, HttpStatus status) {
