@@ -2,8 +2,7 @@ package com.aiyl.bank.rest.entity;
 
 import com.aiyl.bank.rest.enam.AccountStatus;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -12,6 +11,9 @@ import java.time.LocalDateTime;
 @Table(name = "accounts")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Account {
     @Id
     @GeneratedValue(generator = "account_gen", strategy = GenerationType.SEQUENCE)
@@ -21,11 +23,14 @@ public class Account {
     @Column(name = "account_number", unique = true, nullable = false, length = 16)
     private String accountNumber;
 
+    @Column(name = "owner_name", nullable = false)
+    private String ownerName;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private AccountStatus accountStatus;
 
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal balance;
 
     @Column(nullable = false, updatable = false)

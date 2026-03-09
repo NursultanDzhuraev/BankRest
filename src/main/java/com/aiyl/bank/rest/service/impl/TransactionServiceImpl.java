@@ -4,6 +4,7 @@ import com.aiyl.bank.rest.dto.response.TransferResponse;
 import com.aiyl.bank.rest.dto.request.TransferRequest;
 import com.aiyl.bank.rest.enam.AccountStatus;
 import com.aiyl.bank.rest.enam.TransactionStatus;
+import com.aiyl.bank.rest.enam.TransactionType;
 import com.aiyl.bank.rest.entity.Account;
 import com.aiyl.bank.rest.entity.Transaction;
 import com.aiyl.bank.rest.exception.AccountNotActiveException;
@@ -45,20 +46,23 @@ public class TransactionServiceImpl implements TransactionService {
             target.setBalance(target.getBalance().add(transferRequest.amount()));
             accountRepository.save(source);
             accountRepository.save(target);
+
             log.debug("Balance updated: source={}, target={}", source.getBalance(), target.getBalance());
 
-            Transaction transfer = new Transaction();
-            transfer.setSourceAccount(source);
-            transfer.setTargetAccount(target);
-            transfer.setAmount(transferRequest.amount());
-            transfer.setStatus(TransactionStatus.SUCCESS);
-            transactionRepository.save(transfer);
+            Transaction transfer = saveTransaction(source, target, transferRequest.amount(),
+                    TransactionType.TRANSFER_OUT, TransactionStatus.SUCCESS,
+                    source.getBalance(), null);
+
+            saveTransaction(target, source, transferRequest.amount(), TransactionType.TRANSFER_IN,
+                    TransactionStatus.SUCCESS, target.getBalance(), null);
+
             log.info("Transfer created successfully: {}", transfer.getId());
 
             return mapToResponse(transfer, source, target);
 
         } catch (AccountNotFoundException | InsufficientSumException e) {
-            log.warn(e.getMessage());
+            log.warn("Transfer failed: {}", e.getMessage());
+            saveFiledTransaction(source, target, transferRequest.amount(), e.getMessage());
             throw e;
         }
     }
@@ -89,6 +93,39 @@ public class TransactionServiceImpl implements TransactionService {
                 transaction.getStatus(),
                 source.getBalance(),
                 transaction.getCreateTime());
+    }
+
+    private Transaction saveTransaction(Account primary, Account counterparty,
+                                        BigDecimal amount, TransactionType type, TransactionStatus status,
+                                        BigDecimal balanceAfter, String failureReason) {
+        Transaction transfer = Transaction.builder()
+                .sourceAccount(type == TransactionType.TRANSFER_OUT ? primary : counterparty)
+                .targetAccount(type == TransactionType.TRANSFER_IN ? primary : counterparty)
+                .amount(amount)
+                .type(type)
+                .status(status)
+                .balanceAfter(balanceAfter)
+                .failureReason(failureReason)
+                .build();
+        return transactionRepository.save(transfer);
+    }
+
+    private void saveFiledTransaction(Account source, Account target, BigDecimal amount, String message) {
+        try {
+            Transaction failed = Transaction.builder()
+                    .sourceAccount(source)
+                    .targetAccount(target)
+                    .amount(amount)
+                    .type(TransactionType.TRANSFER_IN)
+                    .status(TransactionStatus.FAILED)
+                    .balanceAfter(source.getBalance())
+                    .failureReason(message)
+                    .build();
+            transactionRepository.save(failed);
+            log.debug("Failed transaction saved)");
+        } catch (Exception e) {
+            log.error("Failed transaction not saved: {}", e.getMessage());
+        }
     }
 
 }

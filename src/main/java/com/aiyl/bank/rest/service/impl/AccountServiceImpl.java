@@ -56,7 +56,9 @@ public class AccountServiceImpl implements AccountService {
         return new StatementDto(
                 transaction.getId(),
                 transaction.getCreateTime(),
+                transaction.getType(),
                 transaction.getAmount(),
+                transaction.getBalanceAfter(),
                 transaction.getStatus());
     }
 
