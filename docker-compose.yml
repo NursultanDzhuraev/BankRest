@@ -2,52 +2,51 @@
 version: "3.9"
 
 services:
+  # PostgreSQL database
+  postgres:
+    image: postgres:16-alpine
+    container_name: bank-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: bank_rest
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: nurs123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d bank_rest"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
- #PostgreSQL database
+  # Spring Boot application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bank-rest
+    restart: unless-stopped
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/bank_rest
+      DB_USERNAME: postgres
+      DB_PASSWORD: nurs123
+      SERVER_PORT: 8080
+      SPRING_PROFILES_ACTIVE: default
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
 
-    postgres:
-        image: postgres:16-alpine
-        container_name: bank-postgres
-        restart: unless-stopped
-        environment:
-            POSTGRES_DB: bank_rest
-            POSTGRES_USER: postgres
-            POSTGRES_PASSWORD: nurs123
-        ports:
-            - "5432:5432"
-        volumes:
-            -  postgres_data:/var/lib/postgresql/data
-        healthcheck:
-            test: ["CMD-SHELL", "pg_isready -U postgres -d bank_rest"]
-            interval: 10s
-            timeout: 5s
-            retries: 5
-            start_period: 10s
-
- # Spring Boot application
-    app:
-     build:
-         context: .
-         dockerfile: Dockerfile
-     container_name: bank-rest
-     restart: unless-stopped
-     environment:
-         DB_URL: jdbc:postgresql://localhost:5432/bank_rest
-         DB_USERNAME: postgres
-         DB_PASSWORD: nurs123
-         SERVER_PORT: 8080
-         SPRING_PROFILES_ACTIVE: default
-     ports:
-         -  "8080:8080"
-     depends_on:
-         postgres:
-             condition: service_started
-     healthcheck:
-         test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health || exit 1"]
-         interval: 30s
-         timeout: 10s
-         retries: 3
-         start_period: 60s
 volumes:
-   postgres_data:
-       driver: local
+  postgres_data:
+    driver: local

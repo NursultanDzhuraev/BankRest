@@ -7,9 +7,10 @@ spring:
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:nurs123}
     driver-class-name: org.postgresql.Driver
+
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     show-sql: true
 
   flyway:
