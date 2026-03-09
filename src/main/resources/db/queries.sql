@@ -1,3 +1,12 @@
+INSERT INTO accounts (account_number, owner_name, account_status, balance)
+VALUES
+    ('1000000000000001', 'Nursultan Juraev', 'ACTIVE', 5000.00),
+    ('1000000000000002', 'Aida Bekova', 'ACTIVE', 12000.50),
+    ('1000000000000003', 'Azamat Turgunov', 'BLOCKED', 300.00),
+    ('1000000000000004', 'Elvira Sadykova', 'ACTIVE', 750.75),
+    ('1000000000000005', 'Bakyt Omuraliev', 'CLOSED', 0.00);
+
+
 
 -- ТОП-5 счетов по количеству транзакций за последний месяц
 select
@@ -20,7 +29,7 @@ select
 from transactions t
 where t.type in ('TRANSFER_OUT', 'TRANSFER_IN')
 and t.status = 'SUCCESS'
-and t.create_time between '2026-01-01' and '2026-02-01';
+and t.create_time between '2026-02-01' and '2026-03-12';
 
 -- Найти счета с отрицательным балансом
 
@@ -38,7 +47,7 @@ select
     sum(t.amount) as total_transfer_amount
 from transactions t
 where t.type in ('TRANSFER_OUT', 'TRANSFER_IN')
-and t.create_time between '2026-01-01' and '2026-02-01';
+and t.create_time between '2026-02-01' and '2026-03-11';
 
 -- Без индекса:
 -- Проверяет каждую строку таблицы transactions
