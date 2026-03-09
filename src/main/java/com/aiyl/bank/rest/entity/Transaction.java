@@ -1,7 +1,7 @@
 package com.aiyl.bank.rest.entity;
 
-import com.aiyl.bank.rest.enam.TransactionStatus;
-import com.aiyl.bank.rest.enam.TransactionType;
+import com.aiyl.bank.rest.enums.TransactionStatus;
+import com.aiyl.bank.rest.enums.TransactionType;
 import jakarta.persistence.*;
 import lombok.*;
 

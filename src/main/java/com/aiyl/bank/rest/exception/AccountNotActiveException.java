@@ -1,6 +1,6 @@
 package com.aiyl.bank.rest.exception;
 
-import com.aiyl.bank.rest.enam.AccountStatus;
+import com.aiyl.bank.rest.enums.AccountStatus;
 import org.springframework.http.HttpStatus;
 
 public class AccountNotActiveException extends ApiException {

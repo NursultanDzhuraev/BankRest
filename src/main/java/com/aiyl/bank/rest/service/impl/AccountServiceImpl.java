@@ -46,7 +46,7 @@ public class AccountServiceImpl implements AccountService {
                 accountNumber, fromDateTime, toDateTime, pageable);
         Page<StatementDto> dtoPage = transactionPage.map(this::mapToDto);
 
-        log.debug("Statement fetched :{} records (page{}/{}"
+        log.debug("Statement fetched :{} records (page{}/{})"
                 , dtoPage.getNumberOfElements(), pageNumber + 1, dtoPage.getTotalPages());
         return PaginationResponse.of(dtoPage);
 

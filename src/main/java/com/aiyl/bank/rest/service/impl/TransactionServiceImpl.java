@@ -2,9 +2,9 @@ package com.aiyl.bank.rest.service.impl;
 
 import com.aiyl.bank.rest.dto.response.TransferResponse;
 import com.aiyl.bank.rest.dto.request.TransferRequest;
-import com.aiyl.bank.rest.enam.AccountStatus;
-import com.aiyl.bank.rest.enam.TransactionStatus;
-import com.aiyl.bank.rest.enam.TransactionType;
+import com.aiyl.bank.rest.enums.AccountStatus;
+import com.aiyl.bank.rest.enums.TransactionStatus;
+import com.aiyl.bank.rest.enums.TransactionType;
 import com.aiyl.bank.rest.entity.Account;
 import com.aiyl.bank.rest.entity.Transaction;
 import com.aiyl.bank.rest.exception.AccountNotActiveException;
@@ -68,7 +68,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     private Account findAccountByAccountNumber(String accountNumber) {
-        return transactionRepository.findByAccountNumber(accountNumber).orElseThrow(
+        return accountRepository.findByAccountNumber(accountNumber).orElseThrow(
                 () -> new AccountNotFoundException(accountNumber));
     }
 
@@ -79,7 +79,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     private void validateSufficientSum(Account account, BigDecimal amount) {
-        if (account.hasSufficientSum(amount)) {
+        if (!account.hasSufficientSum(amount)) {
             throw new InsufficientSumException(account.getAccountNumber(), account.getBalance(), amount);
         }
     }
@@ -122,7 +122,7 @@ public class TransactionServiceImpl implements TransactionService {
                     .failureReason(message)
                     .build();
             transactionRepository.save(failed);
-            log.debug("Failed transaction saved)");
+            log.debug("Failed transaction saved");
         } catch (Exception e) {
             log.error("Failed transaction not saved: {}", e.getMessage());
         }

@@ -1,6 +1,6 @@
 package com.aiyl.bank.rest.dto.response;
 
-import com.aiyl.bank.rest.enam.TransactionStatus;
+import com.aiyl.bank.rest.enums.TransactionStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
