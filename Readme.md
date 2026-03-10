@@ -19,7 +19,7 @@ API Endpoints
    json{
    "sourceAccountNumber": "1000000000000001",
    "targetAccountNumber": "1000000000000002",
-   "amount": 1000.00
+   "amount": 1000.50
    }
    Response:
    json{
