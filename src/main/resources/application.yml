@@ -4,19 +4,20 @@ spring:
 
   datasource:
     url: ${DB_URL:jdbc:postgresql://localhost:5432/bank_rest}
-    username: ${DB_USERNAME:postgres}
-    password: ${DB_PASSWORD:nurs123}
+    username: ${DB_USERNAME:postgre}
+    password: ${DB_PASSWORD:1234}
     driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     show-sql: true
 
   flyway:
     enabled: true
     locations: classpath:db/migration
     baseline-on-migrate: true
+    validate-on-migrate: true
 
 server:
   port: ${SERVER_PORT:8080}
